@@ -1,11 +1,17 @@
 package main
 
 import (
+<<<<<<< HEAD
 	"crypto/rand"
 	"encoding/base64"
 	"fmt"
 	"io"
 	"mime"
+=======
+	"encoding/base64"
+	"fmt"
+	"io"
+>>>>>>> refs/remotes/origin/main
 	"net/http"
 	"os"
 	"path/filepath"
@@ -47,6 +53,7 @@ func (cfg *apiConfig) handlerUploadThumbnail(w http.ResponseWriter, r *http.Requ
 	}
 	defer file.Close()
 
+<<<<<<< HEAD
 	mediaType, _, err := mime.ParseMediaType(header.Header.Get("Content-Type"))
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Bad content type", err)
@@ -60,6 +67,12 @@ func (cfg *apiConfig) handlerUploadThumbnail(w http.ResponseWriter, r *http.Requ
 		extension = "jpeg"
 	} else {
 		respondWithError(w, http.StatusBadRequest, "Invalid thumbnail type", err)
+=======
+	mediaType := header.Header.Get("Content-Type")
+	data, err := io.ReadAll(file)
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Unable to read file data", err)
+>>>>>>> refs/remotes/origin/main
 		return
 	}
 
@@ -74,6 +87,7 @@ func (cfg *apiConfig) handlerUploadThumbnail(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
+<<<<<<< HEAD
 	var fnBytes []byte = make([]byte, 32)
 	_, _ = rand.Read(fnBytes)
 	fileName := base64.RawURLEncoding.EncodeToString(fnBytes)
@@ -91,11 +105,19 @@ func (cfg *apiConfig) handlerUploadThumbnail(w http.ResponseWriter, r *http.Requ
 		respondWithError(w, http.StatusInternalServerError, "Write failure", err)
 		return
 	}
+=======
+	encodedUrl := base64.StdEncoding.EncodeToString(data)
+	dataUrl := fmt.Sprintf(`data:%s;base64,%s`, mediaType, encodedUrl)
+>>>>>>> refs/remotes/origin/main
 
 	if video.ThumbnailURL == nil {
 		video.ThumbnailURL = new(string)
 	}
+<<<<<<< HEAD
 	*video.ThumbnailURL = fmt.Sprintf(`http://localhost:%s/assets/%s.%s`, cfg.port, fileName, extension)
+=======
+	*video.ThumbnailURL = dataUrl
+>>>>>>> refs/remotes/origin/main
 
 	err = cfg.db.UpdateVideo(video)
 	if err != nil {
